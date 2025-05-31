@@ -112,5 +112,15 @@ class Objeto3D:
             self.vertices[i].x = x
             self.vertices[i].z = z
 
+    def AnteriorPos(self):
+        for i in range(len(self.vertices)):
+            self.angle[i] -= self.speed[i] * (1/30)
+
+            x = self.radius[i] * math.cos(self.angle[i])
+            z = self.radius[i] * math.sin(self.angle[i])
+
+            self.vertices[i].x = x
+            self.vertices[i].z = z
+
 
 

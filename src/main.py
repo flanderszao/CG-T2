@@ -162,23 +162,23 @@ def desenha():
 def teclado(key, x, y):
     global play
 
-    if key == b'p':  # alterna play entre 0 e 1
+    if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
         play = 0 if play else 1
 
-    if key == b'a': #maneira meio porca de fazer isso, mas funciona
+    if key == b'a': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
         o.AnteriorPos()
         o.AnteriorPos()
         o.AnteriorPos()
 
-    if key == b'd': #maneira meio porca de fazer isso, mas funciona
+    if key == b'd': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
         o.ProximaPos()
         o.ProximaPos()
         o.ProximaPos()
 
-    if key == b'q': #rotaciona para cima
+    if key == b'2': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
-    if key == b'e': #rotaciona para baixo
+    if key == b's': #usa tecla 's' para rotacionar para baixo
         o.rotation = (1, 0, 0, o.rotation[3] - 5)    
 
     glutPostRedisplay()

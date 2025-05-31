@@ -1,3 +1,5 @@
+import os
+
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
@@ -16,8 +18,9 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+    caminho = os.path.join(os.path.dirname(__file__), 'Human_Head.obj')
     o = Objeto3D()
-    o.LoadFile('Human_Head.obj')
+    o.LoadFile(caminho)
 
     DefineLuz()
     PosicUser()

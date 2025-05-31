@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 
 import time
+import os
 
 from Objeto3D import *
 
@@ -20,8 +21,9 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+    caminho = os.path.join(os.path.dirname(__file__), 'Human_Head.obj')
     o = Objeto3D()
-    o.LoadFile('Human_Head.obj')
+    o.LoadFile(caminho)
 
     DefineLuz()
     PosicUser()
@@ -133,7 +135,7 @@ def Animacao():
 
     soma_dt += delta_time
 
-    if soma_dt > 1.0 / 30:  # Aproximadamente 30 quadros por segundo
+    if soma_dt > 1.0 / 60:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
         
         o.ProximaPos()
@@ -167,7 +169,7 @@ def main():
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH)
 
     # Especifica o tamnho inicial em pixels da janela GLUT
-    glutInitWindowSize(640, 480)
+    glutInitWindowSize(400, 400)
 
     # Especifica a posição de início da janela
     glutInitWindowPosition(100, 100)

@@ -1,4 +1,10 @@
 # T2 CG
+## Objeto3D.py
+### def ProximaPos()
+agora recebe como parâmetro v
+se v=1 a próxima posição é para frente
+se v=0 próxima posição é para trás
+
 ## main.py ## (v.0.1)
 nova variável PLAY (1 ou 0)
 

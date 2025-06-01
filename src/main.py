@@ -142,7 +142,7 @@ def Animacao():
 
     if soma_dt > 1.0 / 60:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
-        o.ProximaPos()
+        o.ProximaPos(1)
         glutPostRedisplay()
 
 def desenha():
@@ -166,20 +166,39 @@ def teclado(key, x, y):
         play = 0 if play else 1
 
     if key == b'a': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
-        o.AnteriorPos()
-        o.AnteriorPos()
-        o.AnteriorPos()
+        o.ProximaPos(0)
+        o.ProximaPos(0)
+        o.ProximaPos(0)
 
     if key == b'd': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
-        o.ProximaPos()
-        o.ProximaPos()
-        o.ProximaPos()
+        o.ProximaPos(1)
+        o.ProximaPos(1)
+        o.ProximaPos(1)
 
-    if key == b'2': #usa tecla 'w' para rotacionar para cima
+    if key == b'w': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
     if key == b's': #usa tecla 's' para rotacionar para baixo
         o.rotation = (1, 0, 0, o.rotation[3] - 5)    
+
+    #controlar as posições em x,y,z
+    if key == b't': # X +
+        o.position.x += 5
+
+    if key == b'g': # X -
+        o.position.x -= 5
+
+    if key == b'y': # Y +
+        o.position.y += 5
+
+    if key == b'h': # Y -
+        o.position.y -= 5
+
+    if key == b'u': # Z +
+        o.position.z += 5
+
+    if key == b'j': # Z -
+        o.position.z -= 5
 
     glutPostRedisplay()
     pass

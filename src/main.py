@@ -3,12 +3,14 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 
 import time
+import os
 
 from Objeto3D import *
 
 o:Objeto3D
 tempo_antes = time.time()
 soma_dt = 0
+play = 1
 
 def init():
     global o
@@ -20,8 +22,9 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+    caminho = os.path.join(os.path.dirname(__file__), 'Human_Head.obj')
     o = Objeto3D()
-    o.LoadFile('Human_Head.obj')
+    o.LoadFile(caminho)
 
     DefineLuz()
     PosicUser()
@@ -125,7 +128,11 @@ def DesenhaCubo():
 
 # Função chamada constantemente (idle) para atualizar a animação
 def Animacao():
-    global soma_dt, tempo_antes
+    global soma_dt, tempo_antes, play
+
+    # cuidar do play e pause
+    if not play:
+        return
 
     tempo_agora = time.time()
     delta_time = tempo_agora - tempo_antes
@@ -133,10 +140,9 @@ def Animacao():
 
     soma_dt += delta_time
 
-    if soma_dt > 1.0 / 30:  # Aproximadamente 30 quadros por segundo
+    if soma_dt > 1.0 / 60:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
-        
-        o.ProximaPos()
+        o.ProximaPos(1)
         glutPostRedisplay()
 
 def desenha():
@@ -154,7 +160,45 @@ def desenha():
     pass
 
 def teclado(key, x, y):
-    o.rotation = (1, 0, 0, o.rotation[3] + 2)    
+    global play
+
+    if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
+        play = 0 if play else 1
+
+    if key == b'a': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
+        o.ProximaPos(0)
+        o.ProximaPos(0)
+        o.ProximaPos(0)
+
+    if key == b'd': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
+        o.ProximaPos(1)
+        o.ProximaPos(1)
+        o.ProximaPos(1)
+
+    if key == b'w': #usa tecla 'w' para rotacionar para cima
+        o.rotation = (1, 0, 0, o.rotation[3] + 5)  
+
+    if key == b's': #usa tecla 's' para rotacionar para baixo
+        o.rotation = (1, 0, 0, o.rotation[3] - 5)    
+
+    #controlar as posições em x,y,z
+    if key == b't': # X +
+        o.position.x += 5
+
+    if key == b'g': # X -
+        o.position.x -= 5
+
+    if key == b'y': # Y +
+        o.position.y += 5
+
+    if key == b'h': # Y -
+        o.position.y -= 5
+
+    if key == b'u': # Z +
+        o.position.z += 5
+
+    if key == b'j': # Z -
+        o.position.z -= 5
 
     glutPostRedisplay()
     pass
@@ -167,7 +211,7 @@ def main():
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH)
 
     # Especifica o tamnho inicial em pixels da janela GLUT
-    glutInitWindowSize(640, 480)
+    glutInitWindowSize(400, 400)
 
     # Especifica a posição de início da janela
     glutInitWindowPosition(100, 100)

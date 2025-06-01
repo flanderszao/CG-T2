@@ -102,9 +102,10 @@ class Objeto3D:
         glPopMatrix()
         pass
 
-    def ProximaPos(self):
+    def ProximaPos(self, v):
         for i in range(len(self.vertices)):
-            self.angle[i] += self.speed[i] * (1/30)
+            if v: self.angle[i] += self.speed[i] * (1/30)
+            else: self.angle[i] -= self.speed[i] * (1/30)
 
             x = self.radius[i] * math.cos(self.angle[i])
             z = self.radius[i] * math.sin(self.angle[i])

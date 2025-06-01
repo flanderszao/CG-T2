@@ -18,3 +18,18 @@ w rotacionar para cima
 a é REWIND
 d é FOWARD
 espaço é PAUSE/PLAY
+
+# Botões
+| Tecla | Ação              |
+|-------|-------------------|
+| D    | FOWARD   |
+| A     | REWIND |
+| SPACE     | PAUSE  |
+| W     | ROTACIONA PARA CIMA |
+| S     | ROTACIONA PARA BAIXO        |
+| T   | POSIÇÃO X + 5      |
+| Y   | POSIÇÃO Y + 5      |
+| U   | POSIÇÃO Z + 5      |
+| G   | POSIÇÃO X - 5      |
+| H   | POSIÇÃO Y - 5      |
+| J   | POSIÇÃO Z - 5      |

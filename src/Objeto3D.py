@@ -4,114 +4,106 @@ from OpenGL.GL import *
 from Ponto import *
 
 import random
+import math
 
 class Objeto3D:
-        
+
     def __init__(self):
         self.vertices = []
-        self.faces    = []
-        self.speed    = []
-        self.angle    = []
-        self.radius   = []
-        self.position = Ponto(0,0,0)
-        self.rotation = (0,0,0,0)
-        pass
+        self.faces = []
+        self.speed = []
+        self.angle = []
+        self.radius = []
+        self.y_original = []  # armazena y original
+        self.position = Ponto(0, 0, 0)
+        self.rotation = (0, 0, 0, 0)
+        self.center = Ponto(0, 0, 0)
+        self.time = 1.0  # tempo: 1 → 0 (colapso), depois 0 → 1 (retorno)
+        self.frame = 0
+        self.retornando = False  # fase de retorno
 
-    def LoadFile(self, file:str):
-        f = open(file, "r")
+    def LoadFile(self, file: str):
+        with open(file, "r") as f:
+            for line in f:
+                values = line.split(' ')
+                if values[0] == 'v':
+                    ponto = Ponto(float(values[1]), float(values[2]), float(values[3]))
+                    self.vertices.append(ponto)
+                    self.y_original.append(ponto.y)  # salva o Y original
+                    self.speed.append(random.uniform(0.2, 0.6))
+                    self.angle.append(math.atan2(ponto.z, ponto.x))
+                    self.radius.append(math.hypot(ponto.x, ponto.z))
+                elif values[0] == 'f':
+                    self.faces.append([int(f.split('/')[0]) - 1 for f in values[1:]])
 
-        # leitor de .obj baseado na descrição em https://en.wikipedia.org/wiki/Wavefront_.obj_file    
-        for line in f:
-            values = line.split(' ')
-            # dividimos a linha por ' ' e usamos o primeiro elemento para saber que tipo de item temos
-
-            if values[0] == 'v': 
-                # item é um vértice, os outros elementos da linha são a posição dele
-                self.vertices.append(Ponto(float(values[1]),
-                                           float(values[2]),
-                                           float(values[3])))
-                self.speed.append((random.random() + 0.1))
-                
-
-                self.angle.append(math.atan2(float(values[3]), float(values[1])))
-                self.radius.append(math.hypot(float(values[1]), float(values[3])))
-
-
-            if values[0] == 'f':
-                # item é uma face, os outros elementos da linha são dados sobre os vértices dela
-                self.faces.append([])
-                for fVertex in values[1:]:
-                    fInfo = fVertex.split('/')
-                    # dividimos cada elemento por '/'
-                    self.faces[-1].append(int(fInfo[0]) - 1) # primeiro elemento é índice do vértice da face
-                    # ignoramos textura e normal
-                
-            # ignoramos outros tipos de items, no exercício não é necessário e vai só complicar mais
-        pass
+        cx = sum(v.x for v in self.vertices) / len(self.vertices)
+        cy = sum(v.y for v in self.vertices) / len(self.vertices)
+        cz = sum(v.z for v in self.vertices) / len(self.vertices)
+        self.center = Ponto(cx, cy, cz)
 
     def DesenhaVertices(self):
         glPushMatrix()
         glTranslatef(self.position.x, self.position.y, self.position.z)
         glRotatef(self.rotation[3], self.rotation[0], self.rotation[1], self.rotation[2])
-        glColor3f(.0, .0, .0)
+        glColor3f(0.0, 0.0, 0.0)
         glPointSize(8)
 
-        # glBegin(GL_POINTS)
         for v in self.vertices:
             glPushMatrix()
             glTranslate(v.x, v.y, v.z)
-            glutSolidSphere(.05, 20, 20)
+            glutSolidSphere(0.05, 20, 20)
             glPopMatrix()
-            # glVertex(v.x, v.y, v.z)
-        # glEnd()
-        
-        glPopMatrix()
-        pass
 
-    def DesenhaWireframe(self):
-        glPushMatrix()
-        glTranslatef(self.position.x, self.position.y, self.position.z)
-        glRotatef(self.rotation[3], self.rotation[0], self.rotation[1], self.rotation[2])
-        glColor3f(0, 0, 0)
-        glLineWidth(2)        
-        
-        for f in self.faces:            
-            glBegin(GL_LINE_LOOP)
-            for iv in f:
-                v = self.vertices[iv]
-                glVertex(v.x, v.y, v.z)
-            glEnd()
-        
         glPopMatrix()
-        pass
 
-    def Desenha(self):
-        glPushMatrix()
-        glTranslatef(self.position.x, self.position.y, self.position.z)
-        glRotatef(self.rotation[3], self.rotation[0], self.rotation[1], self.rotation[2])
-        glColor3f(0.34, .34, .34)
-        glLineWidth(2)        
-        
-        for f in self.faces:            
-            glBegin(GL_TRIANGLE_FAN)
-            for iv in f:
-                v = self.vertices[iv]
-                glVertex(v.x, v.y, v.z)
-            glEnd()
-        
-        glPopMatrix()
-        pass
+    def cabecaParticulas(self):
+        for i in range(len(self.vertices)):
+            
+            #if v:
+            #    self.angle[i] += self.speed[i] * (1 / 30)
+            #else:
+            #    self.angle[i] -= self.speed[i] * (1 / 30)
+
+            # Interpolação suave do raio: 1 → 0.1 e volta
+            base = 0.1
+            t_factor = self.time if not self.retornando else (1 - self.time)
+            r_factor = base + (1 - base) * t_factor
+            r = self.radius[i] * r_factor
+
+            # Espiral
+            x = r * math.cos(self.angle[i])
+            z = r * math.sin(self.angle[i])
+
+            # Interpolação da altura real para afundar e voltar
+            y_collapse = self.center.y - 1  # ponto mais baixo
+            y = self.y_original[i] * self.time + y_collapse * (1 - self.time)
+
+            self.vertices[i].x = self.center.x + x
+            self.vertices[i].y = y
+            self.vertices[i].z = self.center.z + z
+
 
     def ProximaPos(self, v):
-        for i in range(len(self.vertices)):
-            if v: self.angle[i] += self.speed[i] * (1/30)
-            else: self.angle[i] -= self.speed[i] * (1/30)
+        self.frame = self.frame+v
+        print(self.frame)
 
-            x = self.radius[i] * math.cos(self.angle[i])
-            z = self.radius[i] * math.sin(self.angle[i])
+        Objeto3D.cabecaParticulas(self)
 
-            self.vertices[i].x = x
-            self.vertices[i].z = z
+        # Animação cíclica
+        if self.frame < 200:
+            if self.time > 0:
+                self.time -= 0.005
+                if self.time <= 0:
+                    self.time = 0
+                    self.retornando = True
+        else: 
+            if self.frame < 400:
+                if self.time < 1.0:
+                    self.time += 0.005
+                    if self.time >= 1.0:
+                        self.time = 1.0
+                        self.retornando = False
+                        self.frame = 0
 
-
-
+    def teste(self, value):
+        self.frame = value

@@ -165,40 +165,52 @@ def teclado(key, x, y):
     if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
         play = 0 if play else 1
 
-    if key == b'a': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
-        o.ProximaPos(0)
-        o.ProximaPos(0)
-        o.ProximaPos(0)
+    if key == b',': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
+        o.ProximaPos(-1)
+        o.ProximaPos(-1)
+        o.ProximaPos(-1)
 
-    if key == b'd': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
+    if key == b'.': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
         o.ProximaPos(1)
         o.ProximaPos(1)
         o.ProximaPos(1)
 
-    if key == b'w': #usa tecla 'w' para rotacionar para cima
+    if key == b't': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
-    if key == b's': #usa tecla 's' para rotacionar para baixo
+    if key == b'g': #usa tecla 's' para rotacionar para baixo
         o.rotation = (1, 0, 0, o.rotation[3] - 5)    
 
     #controlar as posições em x,y,z
-    if key == b't': # X +
-        o.position.x += 5
+    if key == b'd': # X +
+        o.position.x += 2
 
-    if key == b'g': # X -
-        o.position.x -= 5
+    if key == b'a': # X -
+        o.position.x -= 2
 
-    if key == b'y': # Y +
-        o.position.y += 5
+    if key == b'e': # Y +
+        o.position.y += 2
 
-    if key == b'h': # Y -
-        o.position.y -= 5
+    if key == b'q': # Y -
+        o.position.y -= 2
 
-    if key == b'u': # Z +
-        o.position.z += 5
+    if key == b's': # Z +
+        o.position.z += 2
 
-    if key == b'j': # Z -
-        o.position.z -= 5
+    if key == b'w': # Z -
+        o.position.z -= 2
+
+    if key == b'0':
+        o.teste(0)
+
+    if key == b'1':
+        o.teste(100)
+
+    if key == b'2':
+        o.teste(200)
+
+    if key == b'3':
+        o.teste(300)
 
     glutPostRedisplay()
     pass

@@ -81,13 +81,25 @@ class Objeto3D:
             self.vertices[i].x = self.center.x + x
             self.vertices[i].y = y
             self.vertices[i].z = self.center.z + z
+    
+    def ondaParticulas(self):
+        amplitude=0.5
+        comprimento=2.0
+        velocidade=0.1
+        for i, v in enumerate(self.vertices):
+            # Onda baseada na posição X e no tempo (frame)
+            fase = (v.x + v.z) / comprimento + self.frame * velocidade
+            v.y = self.y_original[i] + amplitude * math.sin(fase)
 
 
     def ProximaPos(self, v):
         self.frame = self.frame+v
         print(self.frame)
 
-        Objeto3D.cabecaParticulas(self)
+        if (self.frame < 401):
+            Objeto3D.cabecaParticulas(self)
+        else:
+            Objeto3D.ondaParticulas(self)
 
         # Animação cíclica
         if self.frame < 200:
@@ -103,7 +115,7 @@ class Objeto3D:
                     if self.time >= 1.0:
                         self.time = 1.0
                         self.retornando = False
-                        self.frame = 0
+                        #self.frame = 0
 
     def teste(self, value):
         self.frame = value

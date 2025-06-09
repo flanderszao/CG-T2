@@ -1,35 +1,31 @@
 # T2 CG
 ## Objeto3D.py
-### def ProximaPos()
-agora recebe como parâmetro v
-se v=1 a próxima posição é para frente
-se v=0 próxima posição é para trás
 
-## main.py ## (v.0.1)
+### def cabecaParticulas
+
+### def ProximaPos
+mudancas anotar
+
+## main.py
 nova variável PLAY (1 ou 0)
 
-### def Animacao [linha 130]
-se play for 1, toca animação normal
-caso contrário, não toca animação
+### def Animaca
+mudanças anotar
 
-### def Teclado() [linha 162]
-s rotacionar para baixo
-w rotacionar para cima
-a é REWIND
-d é FOWARD
-espaço é PAUSE/PLAY
+### def Teclado
+mudanças anotar
 
 # Botões
 | Tecla | Ação              |
 |-------|-------------------|
-| D    | FOWARD   |
-| A     | REWIND |
+| . (>)    | FOWARD   |
+| , (<)     | REWIND |
 | SPACE     | PAUSE  |
-| W     | ROTACIONA PARA CIMA |
-| S     | ROTACIONA PARA BAIXO        |
-| T   | POSIÇÃO X + 5      |
-| Y   | POSIÇÃO Y + 5      |
-| U   | POSIÇÃO Z + 5      |
-| G   | POSIÇÃO X - 5      |
-| H   | POSIÇÃO Y - 5      |
-| J   | POSIÇÃO Z - 5      |
+| W     | PARA FRENTE (Z-1) |
+| S     | PARA TRÁS (Z+1)      |
+| D   | PARA ESQUERDA (Y+1)    |
+| A   | PARA DIREITO (Y-1)     |
+| E   | PARA CIMA (X+1)      |
+| Q   | PARA BAIXO (X-1)     |
+| Y   | ROTACIONA PARA CIMA      |
+| H   | ROTACIONA PARA BAIXO     |

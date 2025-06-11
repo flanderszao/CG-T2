@@ -9,15 +9,16 @@ import math
 class Objeto3D:
 
     def __init__(self):
-        self.dx = []
-        self.dy = []
-        self.dz = []
         self.vertices = []
         self.faces = []
+        self.original_vertices = []  # ← Guardar cópia original completa
         self.speed = []
         self.angle = []
         self.radius = []
         self.y_original = []
+        self.dx = []
+        self.dy = []
+        self.dz = []
         self.position = Ponto(0, 0, 0)
         self.rotation = (0, 0, 0, 0)
         self.center = Ponto(0, 0, 0)
@@ -32,6 +33,7 @@ class Objeto3D:
                 if values[0] == 'v':
                     ponto = Ponto(float(values[1]), float(values[2]), float(values[3]))
                     self.vertices.append(ponto)
+                    self.original_vertices.append(Ponto(ponto.x, ponto.y, ponto.z))  # ← Salva cópia
                     self.y_original.append(ponto.y)
                     self.speed.append(random.uniform(0.2, 0.6))
                     self.angle.append(math.atan2(ponto.z, ponto.x))
@@ -43,11 +45,11 @@ class Objeto3D:
         cy = sum(v.y for v in self.vertices) / len(self.vertices)
         cz = sum(v.z for v in self.vertices) / len(self.vertices)
         self.center = Ponto(cx, cy, cz)
+
         for _ in self.vertices:
-            self.dx.append(random.uniform(-15.0, 15.0))
+            self.dx.append(random.uniform(-10.0, 10.0))
             self.dy.append(random.uniform(-7.0, 7.0))
             self.dz.append(random.uniform(-10.0, 10.0))
-
 
     def DesenhaVertices(self):
         glPushMatrix()
@@ -66,23 +68,37 @@ class Objeto3D:
 
     def cabecaParticulas(self):
         for i in range(len(self.vertices)):
-            base = 0.1
-            t_factor = self.time if not self.retornando else (1 - self.time)
+            self.angle[i] += self.speed[i] * (1 / 30)
+            t_factor = 10 - self.time if self.retornando else self.time
+            base = 0.5
             r_factor = base + (1 - base) * t_factor
             r = self.radius[i] * r_factor
-
             dir = 1 if i % 2 == 0 else -1
             ang = self.angle[i]
 
-            x = r * math.cos(ang * dir) + self.dx[i] * (1 - self.time)
-            z = r * math.sin(ang * dir) + self.dz[i] * (1 - self.time)
+            if self.retornando:
+                spiral = (1 - self.time)
+                intensidade = 600
+                x_s = r * math.cos(ang * dir + spiral * intensidade)
+                z_s = r * math.sin(ang * dir + spiral * intensidade)
 
-            y_collapse = self.center.y - 5
-            y = self.y_original[i] * self.time + (y_collapse + self.dy[i]) * (1 - self.time)
+                orig = self.original_vertices[i]
+                x = orig.x * self.time + (self.center.x + x_s) * (1 - self.time)
+                y = orig.y * self.time + (self.center.y - 10 + self.dy[i]) * (1 - self.time)
+                z = orig.z * self.time + (self.center.z + z_s) * (1 - self.time)
+            else:
+                dispersao = (1 - self.time)
+                intensidade = 5
+                x = r * math.cos(ang * dir) + self.dx[i] * dispersao * intensidade
+                z = r * math.sin(ang * dir) + self.dz[i] * dispersao * intensidade
+                gravidade = 50.0
+                y = self.y_original[i] * self.time + (self.center.y - gravidade + self.dy[i] * intensidade) * dispersao
+                x += self.center.x
+                z += self.center.z
 
-            self.vertices[i].x = self.center.x + x
+            self.vertices[i].x = x
             self.vertices[i].y = y
-            self.vertices[i].z = self.center.z + z
+            self.vertices[i].z = z
 
     def ondaParticulas(self):
         amplitude = 0.5
@@ -94,7 +110,6 @@ class Objeto3D:
 
     def ProximaPos(self, v):
         self.frame += v
-        print(self.frame)
 
         if self.frame < 401:
             self.cabecaParticulas()
@@ -103,7 +118,7 @@ class Objeto3D:
 
         if self.frame < 200:
             if self.time > 0:
-                self.time -= 0.005
+                self.time -= 0.05
                 if self.time <= 0:
                     self.time = 0
                     self.retornando = True

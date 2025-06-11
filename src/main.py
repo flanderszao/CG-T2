@@ -163,18 +163,16 @@ def teclado(key, x, y):
     global play
 
     if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
-        play = 0 if play else 1
+        play = not play
 
     if key == b',': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
-        o.ProximaPos(-1)
-        o.ProximaPos(-1)
+        play = 0
         o.ProximaPos(-1)
 
     if key == b'.': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
+        play = 0
         o.ProximaPos(1)
-        o.ProximaPos(1)
-        o.ProximaPos(1)
-
+    
     if key == b'y': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 

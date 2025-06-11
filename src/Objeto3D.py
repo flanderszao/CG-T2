@@ -25,6 +25,7 @@ class Objeto3D:
         self.time = 1.0
         self.frame = 0
         self.retornando = False
+        self.historico_vertices = [{} for _ in range(0)]
 
     def LoadFile(self, file: str):
         with open(file, "r") as f:
@@ -40,6 +41,8 @@ class Objeto3D:
                     self.radius.append(math.hypot(ponto.x, ponto.z))
                 elif values[0] == 'f':
                     self.faces.append([int(f.split('/')[0]) - 1 for f in values[1:]])
+
+        self.historico_vertices = [{} for _ in self.vertices]
 
         cx = sum(v.x for v in self.vertices) / len(self.vertices)
         cy = sum(v.y for v in self.vertices) / len(self.vertices)
@@ -108,26 +111,53 @@ class Objeto3D:
             fase = (v.x + v.z) / comprimento + self.frame * velocidade
             v.y = self.y_original[i] + amplitude * math.sin(fase)
 
-    def ProximaPos(self, v):
-        self.frame += v
+    def salvar_historico(self):
+        for i, v in enumerate(self.vertices):
+            if self.frame not in self.historico_vertices[i]:
+                # Salva uma cópia do vértice atual para o frame
+                self.historico_vertices[i][self.frame] = Ponto(v.x, v.y, v.z)
 
-        if self.frame < 401:
+    def ProximaPos(self, v):
+        if self.frame + v < 0:
+            self.frame = 0
+        else:
+            self.frame += v
+            
+
+        if v == -1 and self.frame > 0:
+            for i, historico in enumerate(self.historico_vertices):
+                if self.frame in historico:
+                    vertice_hist = historico[self.frame]
+                    self.vertices[i].x = vertice_hist.x
+                    self.vertices[i].y = vertice_hist.y
+                    self.vertices[i].z = vertice_hist.z
+            print(self.frame)
+            return
+
+        print(self.frame)
+
+        if self.frame < 101:
+            self.ondaParticulas()
+        if self.frame < 501 and self.frame >= 101:
             self.cabecaParticulas()
         else:
             self.ondaParticulas()
 
-        if self.frame < 200:
-            if self.time > 0:
-                self.time -= 0.05
-                if self.time <= 0:
-                    self.time = 0
-                    self.retornando = True
-        elif self.frame < 400:
-            if self.time < 1.0:
-                self.time += 0.005
-                if self.time >= 1.0:
-                    self.time = 1.0
-                    self.retornando = False
+        if self.frame > 100:
+            if self.frame < 300:
+                if self.time > 0:
+                    self.time -= 0.05
+                    if self.time <= 0:
+                        self.time = 0
+                        self.retornando = True
+            elif self.frame < 500:
+                if self.time < 1.0:
+                    self.time += 0.005
+                    if self.time >= 1.0:
+                        self.time = 1.0
+                        self.retornando = False
+        
+        self.salvar_historico()
 
     def teste(self, value):
         self.frame = value

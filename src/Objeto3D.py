@@ -111,23 +111,25 @@ class Objeto3D:
     def ProximaPos(self, v):
         self.frame += v
 
-        if self.frame < 401:
-            self.cabecaParticulas()
-        else:
+        # Fase 1: Movimento de onda (balanço da cabeça)
+        if self.frame < 200:
             self.ondaParticulas()
 
-        if self.frame < 200:
+        # Fase 2: Dispersão e retorno das partículas
+        else:
+            self.cabecaParticulas()
+
+        # Controle da variável `time` para controlar dispersão/retorno
+        if 200 <= self.frame < 400:
             if self.time > 0:
-                self.time -= 0.05
+                self.time -= 0.002
                 if self.time <= 0:
                     self.time = 0
                     self.retornando = True
-        elif self.frame < 400:
+
+        elif 400 <= self.frame < 600:
             if self.time < 1.0:
                 self.time += 0.005
                 if self.time >= 1.0:
                     self.time = 1.0
                     self.retornando = False
-
-    def teste(self, value):
-        self.frame = value

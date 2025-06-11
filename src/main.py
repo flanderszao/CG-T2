@@ -175,10 +175,10 @@ def teclado(key, x, y):
         o.ProximaPos(1)
         o.ProximaPos(1)
 
-    if key == b't': #usa tecla 'w' para rotacionar para cima
+    if key == b'y': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
-    if key == b'g': #usa tecla 's' para rotacionar para baixo
+    if key == b'h': #usa tecla 's' para rotacionar para baixo
         o.rotation = (1, 0, 0, o.rotation[3] - 5)    
 
     #controlar as posições em x,y,z

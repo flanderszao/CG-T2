@@ -11,6 +11,8 @@ o:Objeto3D
 tempo_antes = time.time()
 soma_dt = 0
 play = 1
+camera_pos = [-2, 6, -8]
+camera_look = [0, 0, 0]
 
 def init():
     global o
@@ -80,7 +82,7 @@ def PosicUser():
     # As três próximas especificam o ponto de foco nos eixos x, y e z
     # As três últimas especificam o vetor up
     # https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
-    gluLookAt(-2, 6, -8, 0, 0, 0, 0, 1.0, 0)
+    gluLookAt(*camera_pos, *camera_look, 0, 1.0, 0)
 
 def DesenhaLadrilho():
     glColor3f(0.5, 0.5, 0.5)  # desenha QUAD preenchido
@@ -140,7 +142,7 @@ def Animacao():
 
     soma_dt += delta_time
 
-    if soma_dt > 1.0 / 20:  # Aproximadamente 30 quadros por segundo
+    if soma_dt > 1.0 / 30:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
         o.ProximaPos(1)
         glutPostRedisplay()
@@ -165,50 +167,70 @@ def teclado(key, x, y):
     if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
         play = not play
 
-    if key == b',': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
+    if key == b',': #usa tecla '< (,)' para REWIND, maneira meio porca de fazer isso, mas funciona
         play = 0
         o.ProximaPos(-1)
 
-    if key == b'.': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
+    if key == b'.': #usa tecla '> (.)' para FOWARD, maneira meio porca de fazer isso, mas funciona
         play = 0
         o.ProximaPos(1)
     
-    if key == b'y': #usa tecla 'w' para rotacionar para cima
+    if key == b'y': #usa tecla 'y' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
-    if key == b'h': #usa tecla 's' para rotacionar para baixo
+    if key == b'h': #usa tecla 'h' para rotacionar para baixo
         o.rotation = (1, 0, 0, o.rotation[3] - 5)    
 
     #controlar as posições em x,y,z
-    if key == b'd': # X +
+    if key == b'l': # X +
         o.position.x += 2
 
-    if key == b'a': # X -
+    if key == b'j': # X -
         o.position.x -= 2
 
-    if key == b'e': # Y +
+    if key == b'o': # Y +
         o.position.y += 2
 
-    if key == b'q': # Y -
+    if key == b'u': # Y -
         o.position.y -= 2
 
-    if key == b's': # Z +
+    if key == b'i': # Z +
         o.position.z += 2
 
-    if key == b'w': # Z -
+    if key == b'k': # Z -
         o.position.z -= 2
 
-    if key == b'0':
+    if key == b'w':
+        camera_pos[2]+=1
+    
+    if key == b's':
+        camera_pos[2]-=1
+    
+    if key == b'a':
+        camera_pos[0]+=1
+    
+    if key == b'd':
+        camera_pos[0]-=1
+        
+    if key == b'e':
+        camera_pos[1]+=1
+    
+    if key == b'q':
+        camera_pos[1]-=1
+
+    if key == b'0': #teste posicao 0
         o.teste(0)
 
-    if key == b'1':
+    if key == b'1': #teste posicao 1
         o.teste(101)
 
-    if key == b'2':
+    if key == b'2': #teste posicao 2
         o.teste(301)
 
-    if key == b'3':
+    if key == b'3': #teste posicao 3
         o.teste(600)
+
+    PosicUser()
 
     glutPostRedisplay()
     pass

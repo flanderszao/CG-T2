@@ -100,7 +100,7 @@ class Objeto3D:
                 z += self.center.z
 
             self.vertices[i].x = x
-            self.vertices[i].y = y
+            self.vertices[i].y = max(y, -1)
             self.vertices[i].z = z
 
     def ondaParticulas(self):
@@ -193,12 +193,14 @@ class Objeto3D:
         self.salvar_historico()
 
     def teste(self, value):
-        self.frame = value
-        for i, historico in enumerate(self.historico_vertices):
+        total_historico = sum(len(h) for h in self.historico_vertices)
+        if total_historico > 600:
+            self.frame = value
+            for i, historico in enumerate(self.historico_vertices):
                 if self.frame in historico:
                     vertice_hist = historico[self.frame]
-                    self.vertices[i].x = vertice_hist.x
-                    self.vertices[i].y = vertice_hist.y
-                    self.vertices[i].z = vertice_hist.z
-        print(self.frame)
->>>>>>> main
+                    self.vertices[i].x = vertice_hist['vertice'].x
+                    self.vertices[i].y = vertice_hist['vertice'].y
+                    self.vertices[i].z = vertice_hist['vertice'].z
+                    self.time = vertice_hist['time']
+            print(self.frame)

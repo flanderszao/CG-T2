@@ -115,13 +115,16 @@ class Objeto3D:
         for i, v in enumerate(self.vertices):
             if self.frame not in self.historico_vertices[i]:
                 # Salva uma cópia do vértice atual para o frame
-                self.historico_vertices[i][self.frame] = Ponto(v.x, v.y, v.z)
+                self.historico_vertices[i][self.frame] = {
+                    'vertice': Ponto(v.x, v.y, v.z),
+                    'time': self.time
+                }
 
     def ProximaPos(self, v):
         if self.frame + v < 0:
             self.frame = 0
-        elif self.frame > 600:
-            self.frame = 600
+        elif self.frame > 700:
+            self.frame = 700
         else:
             self.frame += v
             
@@ -129,9 +132,11 @@ class Objeto3D:
             for i, historico in enumerate(self.historico_vertices):
                 if self.frame in historico:
                     vertice_hist = historico[self.frame]
-                    self.vertices[i].x = vertice_hist.x
-                    self.vertices[i].y = vertice_hist.y
-                    self.vertices[i].z = vertice_hist.z
+                    self.vertices[i].x = vertice_hist['vertice'].x
+                    self.vertices[i].y = vertice_hist['vertice'].y
+                    self.vertices[i].z = vertice_hist['vertice'].z
+                    self.time = vertice_hist['time']
+                    self.retornando = True if self.frame > 300 else False
             print(self.frame)
             return
 
@@ -139,8 +144,9 @@ class Objeto3D:
 
         if self.frame < 101:
             self.ondaParticulas()
-        if self.frame < 501 and self.frame >= 101:
+        elif self.frame < 501:
             self.cabecaParticulas()
+        #elif self.frame < 600: criar mais um movimento pro trabalho
         else:
             self.ondaParticulas()
 
@@ -148,13 +154,15 @@ class Objeto3D:
             if self.frame < 300:
                 if self.time > 0:
                     self.time -= 0.05
-                    if self.time <= 0:
+                    if self.time < 0:
+                        print(self.time)
                         self.time = 0
                         self.retornando = True
             elif self.frame < 500:
                 if self.time < 1.0:
                     self.time += 0.005
-                    if self.time >= 1.0:
+                    if self.time > 1.0:
+                        print(self.time)
                         self.time = 1.0
                         self.retornando = False
         

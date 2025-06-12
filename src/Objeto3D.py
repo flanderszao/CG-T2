@@ -11,7 +11,7 @@ class Objeto3D:
     def __init__(self):
         self.vertices = []
         self.faces = []
-        self.original_vertices = []  # ← Guardar cópia original completa
+        self.original_vertices = []
         self.speed = []
         self.angle = []
         self.radius = []
@@ -34,7 +34,7 @@ class Objeto3D:
                 if values[0] == 'v':
                     ponto = Ponto(float(values[1]), float(values[2]), float(values[3]))
                     self.vertices.append(ponto)
-                    self.original_vertices.append(Ponto(ponto.x, ponto.y, ponto.z))  # ← Salva cópia
+                    self.original_vertices.append(Ponto(ponto.x, ponto.y, ponto.z))
                     self.y_original.append(ponto.y)
                     self.speed.append(random.uniform(0.2, 0.6))
                     self.angle.append(math.atan2(ponto.z, ponto.x))
@@ -58,12 +58,22 @@ class Objeto3D:
         glPushMatrix()
         glTranslatef(self.position.x, self.position.y, self.position.z)
         glRotatef(self.rotation[3], self.rotation[0], self.rotation[1], self.rotation[2])
-        glColor3f(0.0, 0.0, 0.0)
         glPointSize(8)
 
-        for v in self.vertices:
+        for i, v in enumerate(self.vertices):
             glPushMatrix()
-            glTranslate(v.x, v.y, v.z)
+            glTranslatef(v.x, v.y, v.z)
+
+            # Cores pulsantes apenas após o frame 600
+            if self.frame >= 600:
+                pulsacao = 0.5 + 0.5 * math.sin(self.frame * 0.05 + i)
+                r = 0.3 * pulsacao
+                g = 0.2 * pulsacao
+                b = 0.9
+                glColor3f(r, g, b)
+            else:
+                glColor3f(0.0, 0.0, 0.0)
+
             glutSolidSphere(0.05, 20, 20)
             glPopMatrix()
 
@@ -111,14 +121,49 @@ class Objeto3D:
             fase = (v.x + v.z) / comprimento + self.frame * velocidade
             v.y = self.y_original[i] + amplitude * math.sin(fase)
 
+    def respiracaoParticulas(self):
+        intensidade = 0.05
+        frequencia = 0.05
+        for i in range(len(self.vertices)):
+            pulsacao = 1 + intensidade * math.sin(self.frame * frequencia)
+            ang = self.angle[i]
+            r = self.radius[i] * pulsacao
+
+            x = r * math.cos(ang) + self.center.x
+            y = self.y_original[i] + intensidade * math.sin(self.frame * frequencia * 0.5)
+            z = r * math.sin(ang) + self.center.z
+
+            self.vertices[i].x = x
+            self.vertices[i].y = y
+            self.vertices[i].z = z
+
     def salvar_historico(self):
         for i, v in enumerate(self.vertices):
             if self.frame not in self.historico_vertices[i]:
-                # Salva uma cópia do vértice atual para o frame
                 self.historico_vertices[i][self.frame] = {
                     'vertice': Ponto(v.x, v.y, v.z),
                     'time': self.time
                 }
+
+        if self.frame < 200:
+            self.ondaParticulas()
+        elif self.frame < 600:
+            self.cabecaParticulas()
+        else:
+            self.respiracaoParticulas()
+
+        if 200 <= self.frame < 400:
+            if self.time > 0:
+                self.time -= 0.002
+                if self.time <= 0:
+                    self.time = 0
+                    self.retornando = True
+        elif 400 <= self.frame < 600:
+            if self.time < 1.0:
+                self.time += 0.005
+                if self.time >= 1.0:
+                    self.time = 1.0
+                    self.retornando = False
 
     def ProximaPos(self, v):
         if self.frame + v < 0:
@@ -127,7 +172,7 @@ class Objeto3D:
             self.frame = 700
         else:
             self.frame += v
-            
+
         if v == -1 and self.frame > 0 and self.frame < 600:
             for i, historico in enumerate(self.historico_vertices):
                 if self.frame in historico:
@@ -146,26 +191,23 @@ class Objeto3D:
             self.ondaParticulas()
         elif self.frame < 501:
             self.cabecaParticulas()
-        #elif self.frame < 600: criar mais um movimento pro trabalho
         else:
-            self.ondaParticulas()
+            self.respiracaoParticulas()
 
         if self.frame > 100:
             if self.frame < 300:
                 if self.time > 0:
                     self.time -= 0.05
                     if self.time < 0:
-                        print(self.time)
                         self.time = 0
                         self.retornando = True
             elif self.frame < 500:
                 if self.time < 1.0:
                     self.time += 0.005
                     if self.time > 1.0:
-                        print(self.time)
                         self.time = 1.0
                         self.retornando = False
-        
+
         self.salvar_historico()
 
     def teste(self, value):

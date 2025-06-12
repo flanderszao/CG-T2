@@ -71,7 +71,7 @@ def PosicUser():
 
     # Configura a matriz da projeção perspectiva (FOV, proporção da tela, distância do mínimo antes do clipping, distância máxima antes do clipping
     # https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml
-    gluPerspective(60, 16/9, 0.01, 50)  # Projecao perspectiva
+    gluPerspective(60, 1/1, 0.01, 50)  # Projecao perspectiva
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -140,7 +140,7 @@ def Animacao():
 
     soma_dt += delta_time
 
-    if soma_dt > 1.0 / 60:  # Aproximadamente 30 quadros por segundo
+    if soma_dt > 1.0 / 20:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
         o.ProximaPos(1)
         glutPostRedisplay()
@@ -163,18 +163,16 @@ def teclado(key, x, y):
     global play
 
     if key == b' ':  #usa 'ESPAÇO' (literalmente) alterna play entre 0 e 1
-        play = 0 if play else 1
+        play = not play
 
     if key == b',': #usa tecla 'a' para REWIND, maneira meio porca de fazer isso, mas funciona
-        o.ProximaPos(-1)
-        o.ProximaPos(-1)
+        play = 0
         o.ProximaPos(-1)
 
     if key == b'.': #usa tecla 'd' para FOWARD, maneira meio porca de fazer isso, mas funciona
+        play = 0
         o.ProximaPos(1)
-        o.ProximaPos(1)
-        o.ProximaPos(1)
-
+    
     if key == b'y': #usa tecla 'w' para rotacionar para cima
         o.rotation = (1, 0, 0, o.rotation[3] + 5)  
 
@@ -204,13 +202,13 @@ def teclado(key, x, y):
         o.teste(0)
 
     if key == b'1':
-        o.teste(100)
+        o.teste(101)
 
     if key == b'2':
-        o.teste(200)
+        o.teste(301)
 
     if key == b'3':
-        o.teste(300)
+        o.teste(600)
 
     glutPostRedisplay()
     pass

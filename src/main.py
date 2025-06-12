@@ -140,7 +140,7 @@ def Animacao():
 
     soma_dt += delta_time
 
-    if soma_dt > 1.0 / 60:  # Aproximadamente 30 quadros por segundo
+    if soma_dt > 1.0 / 120:  # Aproximadamente 30 quadros por segundo
         soma_dt = 0
         o.ProximaPos(1)
         glutPostRedisplay()
@@ -202,13 +202,13 @@ def teclado(key, x, y):
         o.teste(0)
 
     if key == b'1':
-        o.teste(100)
+        o.teste(101)
 
     if key == b'2':
-        o.teste(200)
+        o.teste(301)
 
     if key == b'3':
-        o.teste(300)
+        o.teste(600)
 
     glutPostRedisplay()
     pass

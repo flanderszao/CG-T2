@@ -120,11 +120,12 @@ class Objeto3D:
     def ProximaPos(self, v):
         if self.frame + v < 0:
             self.frame = 0
+        elif self.frame > 600:
+            self.frame = 600
         else:
             self.frame += v
             
-
-        if v == -1 and self.frame > 0:
+        if v == -1 and self.frame > 0 and self.frame < 600:
             for i, historico in enumerate(self.historico_vertices):
                 if self.frame in historico:
                     vertice_hist = historico[self.frame]
@@ -161,3 +162,10 @@ class Objeto3D:
 
     def teste(self, value):
         self.frame = value
+        for i, historico in enumerate(self.historico_vertices):
+                if self.frame in historico:
+                    vertice_hist = historico[self.frame]
+                    self.vertices[i].x = vertice_hist.x
+                    self.vertices[i].y = vertice_hist.y
+                    self.vertices[i].z = vertice_hist.z
+        print(self.frame)
